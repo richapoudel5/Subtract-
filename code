@@ -1,0 +1,7 @@
+src/
+├── preprocessing/   # Code to load, clean, and transform data
+│   └── load_data.py
+├── model/           # Code to train and evaluate ML models
+│   └── train_model.py
+├── utils/           # Utility functions like metrics or logging
+│   └── metrics.py
