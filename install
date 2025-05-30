@@ -1,0 +1,36 @@
+# Install dependencies
+# pip install langchain openai pandas python-dotenv
+
+from langchain.agents import initialize_agent, Tool
+from langchain.agents.agent_types import AgentType
+from langchain.llms import OpenAI
+import pandas as pd
+
+# Sample tool: load & clean CSV
+def clean_csv(file_path: str) -> str:
+    df = pd.read_csv(file_path)
+    df_clean = df.dropna().drop_duplicates()
+    summary = df_clean.describe().to_string()
+    df_clean.to_csv("cleaned_data.csv", index=False)
+    return f"Cleaned data saved. Summary:\n{summary}"
+
+# Define tools the agent can use
+tools = [
+    Tool(
+        name="CleanCSVTool",
+        func=clean_csv,
+        description="Use this to clean a CSV file and get statistical summary"
+    )
+]
+
+# Initialize LLM-powered agent
+llm = OpenAI(temperature=0, model_name="gpt-4")  # or "gpt-3.5-turbo"
+agent = initialize_agent(
+    tools,
+    llm,
+    agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
+    verbose=True
+)
+
+# Agent in action
+agent.run("Clean the file 'data.csv' and give me a summary.")
